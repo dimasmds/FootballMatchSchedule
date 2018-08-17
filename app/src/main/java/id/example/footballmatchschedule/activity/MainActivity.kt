@@ -1,8 +1,8 @@
 package id.example.footballmatchschedule.activity
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -12,7 +12,9 @@ import id.example.footballmatchschedule.api.APIServices
 import id.example.footballmatchschedule.api.Client
 import id.example.footballmatchschedule.model.league.League
 import id.example.footballmatchschedule.model.league.LigaResponse
+import id.example.footballmatchschedule.tools.database
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.db.*
 import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,6 +35,13 @@ class MainActivity : AppCompatActivity() {
         tabLayout.addTab(tabLayout.newTab().setText("Prev Match"))
         tabLayout.addTab(tabLayout.newTab().setText("Next Match"))
 
+        database.use {
+            createTable("TABLE_FAVORITE", true,
+                    "ID_" to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+                    "TEAM_ID" to TEXT + UNIQUE,
+                    "TEAM_NAME" to TEXT,
+                    "TEAM_BADGE" to TEXT)
+        }
 
         loadLiga()
     }
