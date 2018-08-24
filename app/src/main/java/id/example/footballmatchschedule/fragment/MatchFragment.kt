@@ -2,6 +2,7 @@ package id.example.footballmatchschedule.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -14,6 +15,12 @@ import id.example.footballmatchschedule.api.APIServices
 import id.example.footballmatchschedule.api.Client
 import id.example.footballmatchschedule.model.event.Event
 import id.example.footballmatchschedule.model.event.MatchResponse
+import id.example.footballmatchschedule.model.favorite.Favorite
+import id.example.footballmatchschedule.adapter.recyclerview.FavoriteAdapter
+import id.example.footballmatchschedule.tools.database
+import org.jetbrains.anko.db.classParser
+import org.jetbrains.anko.db.select
+import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.toast
 import retrofit2.Call
 import retrofit2.Callback
@@ -27,11 +34,14 @@ class MatchFragment : Fragment() {
 
 
     private var matchs : MutableList<Event> = mutableListOf()
+    private var favorites : MutableList<Favorite> = mutableListOf()
 
     private var position : Int = 0
     private lateinit var ligaId : String
     private lateinit var recyclerView : RecyclerView
-    private lateinit var adapter : MatchAdapter
+    private lateinit var matchAdapter : MatchAdapter
+    private lateinit var favorteAdapter : FavoriteAdapter
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     companion object {
         fun newInstance() : MatchFragment{
@@ -46,11 +56,32 @@ class MatchFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_match, container, false)
         position = arguments!!.getInt("position")
         ligaId = arguments!!.getString("ligaId")
-        loadJson(rootView)
+        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout)
+        when(position){
+            in 0..1 -> {
+                loadJson(rootView)
+            }
+            2 -> {
+                loadFavorite(rootView)
+            }
+        }
+
+        swipeRefreshLayout.onRefresh {
+            when(position){
+                in 0..1 -> {
+                    loadJson(rootView)
+                }
+                2 -> {
+                    loadFavorite(rootView)
+                }
+            }
+        }
+
         return rootView
     }
 
     private fun loadJson(view: View) {
+        swipeRefreshLayout.isRefreshing = true
         try {
             val services : APIServices = Client.getClient().create(APIServices::class.java)
             val call : Call<MatchResponse> =
@@ -74,13 +105,35 @@ class MatchFragment : Fragment() {
         }
     }
 
+    private fun loadFavorite(view: View){
+        swipeRefreshLayout.isRefreshing = true
+        favorites.clear()
+        context?.database?.use {
+            val result = select(Favorite.TABLE_FAVORITE)
+            val favorite = result.parseList(classParser<Favorite>())
+            favorites.addAll(favorite)
+            initViews(view)
+        }
+    }
+
     private fun initViews(view: View) {
         recyclerView = view.findViewById(R.id.recyclerView)
         val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 1)
         recyclerView.layoutManager = layoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
-        adapter = MatchAdapter(this.context!!, matchs as ArrayList<Event>)
-        recyclerView.adapter = adapter
+        when(position){
+            in 0..1 -> {
+                matchAdapter = MatchAdapter(this.context!!, matchs as ArrayList<Event>)
+                recyclerView.adapter = matchAdapter
+            }
+            2 -> {
+                favorteAdapter = FavoriteAdapter(this.context!!, favorites as ArrayList<Favorite>)
+                recyclerView.adapter = favorteAdapter
+            }
+
+        }
+
+        swipeRefreshLayout.isRefreshing = false
     }
 
 }// Required empty public constructor

@@ -2,6 +2,7 @@ package id.example.footballmatchschedule.tools
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import id.example.footballmatchschedule.model.favorite.Favorite
 import org.jetbrains.anko.db.*
 
 /**
@@ -26,15 +27,20 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "Favorit
     override fun onCreate(db: SQLiteDatabase) {
         // Here you create tables
 
-        db.createTable("TABLE_FAVORITE", true,
-                "ID_" to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
-                "TEAM_ID" to TEXT + UNIQUE,
-                "TEAM_NAME" to TEXT,
-                "TEAM_BADGE" to TEXT)
+        db.createTable(Favorite.TABLE_FAVORITE, true,
+                Favorite.ID to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+                Favorite.EVENT_ID to TEXT + UNIQUE,
+                Favorite.EVENT_DATE to TEXT,
+                Favorite.HOME_ID to TEXT,
+                Favorite.HOME_NAME to TEXT,
+                Favorite.HOME_SCORE to INTEGER,
+                Favorite.AWAY_ID to TEXT,
+                Favorite.AWAY_NAME to TEXT,
+                Favorite.AWAY_SCORE to INTEGER)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.dropTable("TABLE_FAVORITE", true)
+        db.dropTable(Favorite.TABLE_FAVORITE, true)
     }
 }
 

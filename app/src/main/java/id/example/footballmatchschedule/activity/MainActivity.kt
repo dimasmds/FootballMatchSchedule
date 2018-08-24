@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar!!.title = "Football Match Schedule"
         tabLayout.addTab(tabLayout.newTab().setText("Prev Match"))
         tabLayout.addTab(tabLayout.newTab().setText("Next Match"))
+        tabLayout.addTab(tabLayout.newTab().setText("Favorites Match"))
 
         database.use {
             createTable("TABLE_FAVORITE", true,

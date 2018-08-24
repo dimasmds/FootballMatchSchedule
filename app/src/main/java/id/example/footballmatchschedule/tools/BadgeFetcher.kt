@@ -16,7 +16,7 @@ import retrofit2.Response
 */
 class BadgeFetcher {
 
-    fun loadBadges(id : String, image : ImageView){
+    fun loadBadges(id : String, image : ImageView) {
         image.setImageDrawable(null)
         try {
             val service : APIServices = Client.getClient().create(APIServices::class.java)
@@ -33,7 +33,9 @@ class BadgeFetcher {
                 }
 
                 private fun getBadge(teams: MutableList<Team>) {
-                    if(!teams[0].strTeamBadge.isNullOrEmpty()) Picasso.get().load(teams[0].strTeamBadge).into(image)
+                    if(!teams[0].strTeamBadge.isNullOrEmpty()){
+                        Picasso.get().load(teams[0].strTeamBadge).into(image)
+                    }
                 }
             })
 
