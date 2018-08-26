@@ -188,7 +188,7 @@ class EventDetailActivity : AppCompatActivity() {
 
             })
         } catch (e : Exception){
-            toast(e.message!!)
+            e.message?.let { toast(it) }
         }
     }
 }

@@ -54,8 +54,8 @@ class MatchFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.fragment_match, container, false)
-        position = arguments!!.getInt("position")
-        ligaId = arguments!!.getString("ligaId")
+        position = arguments?.getInt("position") ?: 0
+        ligaId = arguments?.getString("ligaId") ?: "0"
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout)
         when(position){
             in 0..1 -> {

@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        supportActionBar!!.title = "Football Match Schedule"
+        supportActionBar?.title = "Football Match Schedule"
         tabLayout.addTab(tabLayout.newTab().setText("Prev Match"))
         tabLayout.addTab(tabLayout.newTab().setText("Next Match"))
         tabLayout.addTab(tabLayout.newTab().setText("Favorites Match"))
@@ -56,11 +56,9 @@ class MainActivity : AppCompatActivity() {
                     t?.message?.let { toast(it) }
                 }
 
-                override fun onResponse(call: Call<LigaResponse>?, response: Response<LigaResponse>?) {
-                    if (response != null) {
-                        ligas = response.body()?.leagues!!
-                        loadViews()
-                    }
+                override fun onResponse(call: Call<LigaResponse>, response: Response<LigaResponse>) {
+                    ligas = response.body()?.leagues!!
+                    loadViews()
                 }
 
             })
@@ -84,15 +82,15 @@ class MainActivity : AppCompatActivity() {
         spinner.adapter = arrayAdapter
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
-            override fun onTabReselected(tab: TabLayout.Tab?) {
+            override fun onTabReselected(tab: TabLayout.Tab) {
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            override fun onTabUnselected(tab: TabLayout.Tab) {
 
             }
 
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                viewPager.currentItem = tab!!.position
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                viewPager.currentItem = tab.position
             }
 
         })
